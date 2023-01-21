@@ -127,7 +127,7 @@ class ImapProtocol extends Protocol {
         $next_char = "";
         $c = $this->stream;        
         $data = '';
-        $stR = array($this->smtp_conn);
+        $stR = array($c);
         $stW = null;
         while (is_resource($c) && !feof($c)) {
             if (!stream_select($stR, $stW, $stW, $tout)) {
