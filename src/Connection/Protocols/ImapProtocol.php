@@ -136,14 +136,12 @@ class ImapProtocol extends Protocol {
             if ($next_char===false) return "";
             if ($next_char==="\n") break;
             $line .= $next_char;
-            echo "Line is now ".$line."\n";
+            
         }
-        echo "Finished ".$line."\n";
         if ($line === "\n" && $next_char === false) {
             return "";
         }
         if ($this->debug) echo "<< ".$line;
-        echo "Response: ".$line;
         return $line;
     }
 

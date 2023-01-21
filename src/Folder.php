@@ -383,9 +383,9 @@ class Folder {
         while (true) {
             try {
                 // This polymorphic call is fine - Protocol::idle() will throw an exception beforehand
-                echo "wait for next line\n";
+                
                 $line = $connection->nextLine_timed($timeout);
-                echo "Got line: ".$line;
+                
                 if ($line=="") {
                     $this->client->disconnect();
                     return false;
@@ -393,13 +393,13 @@ class Folder {
                     $connection->write("DONE");
                     while (true) { 
                         $line = $connection->nextLine_timed($timeout);
-                        echo "Wait for end: ".$line;
+                        
                         if (strpos($line,"OK")!=false)  break;                       
                     }
                     return true;
                 } 
             }catch (Exceptions\RuntimeException $e) {
-                echo "exception so returning false ".$e->getMessage()."\n";
+                
                 if(strpos($e->getMessage(), "empty response") >= 0 && $connection->connected()) {
                     return false;
                 }
