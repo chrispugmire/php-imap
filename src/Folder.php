@@ -387,10 +387,8 @@ class Folder {
                 $line = $connection->nextLine_timed($timeout);
                 echo "Got line: ".$line;
                 if ($line=="") {
-                    $connection->done();
                     return false;
                 } else if (($pos = strpos($line, "EXISTS")) !== false) {
-                    $connection->done();
                     return true;
                 } 
             }catch (Exceptions\RuntimeException $e) {

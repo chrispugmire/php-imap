@@ -141,6 +141,7 @@ class ImapProtocol extends Protocol {
             return "";
         }
         if ($this->debug) echo "<< ".$line;
+        echo "Response: ".$line;
         return $line;
     }
 
