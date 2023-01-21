@@ -108,7 +108,10 @@ class ImapProtocol extends Protocol {
         echo "nextline called\n";
         while (($next_char = fread($this->stream, 1)) !== false && $next_char !== "\n") {
             $info = stream_get_meta_data($this->stream);
-            if ($info['timed_out']) break;
+            if ($info['timed_out']) {
+                echo "Timeout detected\n";
+                break;
+            }
             $line .= $next_char;
         }
         if ($line === "" && $next_char === false) {

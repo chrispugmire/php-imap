@@ -402,6 +402,9 @@ class Folder {
                 } elseif (strpos($line, "OK") === false) {
                     $connection->done();
                     $connection->idle();
+                } elseif ($line=="") {
+                    echo "Timeout in idle";
+                    return "";                    
                 }
             }catch (Exceptions\RuntimeException $e) {
                 if(strpos($e->getMessage(), "empty response") >= 0 && $connection->connected()) {
