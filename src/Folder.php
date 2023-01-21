@@ -384,7 +384,7 @@ class Folder {
             try {
                 // This polymorphic call is fine - Protocol::idle() will throw an exception beforehand
                 echo "wait for next line\n";
-                $line = $connection->nextLine_timed($tout);
+                $line = $connection->nextLine_timed($timeout);
                 echo "Got line: ".$line;
                 if ($line=="") {
                     $connection->done();

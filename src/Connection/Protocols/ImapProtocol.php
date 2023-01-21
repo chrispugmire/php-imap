@@ -124,12 +124,13 @@ class ImapProtocol extends Protocol {
     public function nextLine_timed($tout): string {
         echo "nextline called - with timed\n";
         $line = "";
+        $next_char = "";
         $c = $this->stream;        
         $data = '';
         $stR = array($this->smtp_conn);
         $stW = null;
         while (is_resource($c) && !feof($c)) {
-            if (!stream_select($stR, $stW, $stW, $timeout)) {
+            if (!stream_select($stR, $stW, $stW, $tout)) {
                 return "";
             }
             $next_char = fread($this->stream, 1);
