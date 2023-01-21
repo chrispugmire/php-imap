@@ -133,8 +133,8 @@ class ImapProtocol extends Protocol {
                 return "";
             }
             $next_char = fread($c, 1);
-            if ($next_char==false) return "";
-            if ($next_char=="\n") break;
+            if ($next_char===false) return "";
+            if ($next_char==="\n") break;
             $line .= $next_char;
             echo "Line is now ".$line."\n";
         }
