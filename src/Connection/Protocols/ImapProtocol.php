@@ -110,7 +110,7 @@ class ImapProtocol extends Protocol {
             $info = stream_get_meta_data($this->stream);
             if ($info['timed_out']) {
                 echo "Timeout detected\n";
-                break;
+                return "";
             }
             $line .= $next_char;
         }

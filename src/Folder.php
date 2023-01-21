@@ -14,6 +14,7 @@ namespace Webklex\PHPIMAP;
 
 use Carbon\Carbon;
 use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
+use Webklex\PHPIMAP\Exceptions\GetMessagesFailedException;
 use Webklex\PHPIMAP\Exceptions\NotSupportedCapabilityException;
 use Webklex\PHPIMAP\Exceptions\RuntimeException;
 use Webklex\PHPIMAP\Query\WhereQuery;
@@ -396,6 +397,7 @@ class Folder {
                     return true;
                 } 
             }catch (Exceptions\RuntimeException $e) {
+                echo "exception so returning false ".$e.getMessage()."\n";
                 if(strpos($e->getMessage(), "empty response") >= 0 && $connection->connected()) {
                     return false;
                 }
