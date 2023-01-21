@@ -132,11 +132,13 @@ class ImapProtocol extends Protocol {
             if (!stream_select($stR, $stW, $stW, $tout)) {
                 return "";
             }
-            $next_char = fread($this->stream, 1);
+            $next_char = fread($c, 1);
             if ($next_char==false) return "";
             if ($next_char=="\n") break;
             $line .= $next_char;
+            echo "Line is now ".$line."\n";
         }
+        echo "Finished ".$line."\n";
         if ($line === "\n" && $next_char === false) {
             return "";
         }
