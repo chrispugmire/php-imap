@@ -109,7 +109,8 @@ class ImapProtocol extends Protocol {
             $line .= $next_char;
         }
         if ($line === "" && $next_char === false) {
-            throw new RuntimeException('empty response');
+            return "";
+            // throw new RuntimeException('empty response'); STUPID CODE. 
         }
         if ($this->debug) echo "<< ".$line."\n";
         return $line . "\n";

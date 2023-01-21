@@ -369,12 +369,14 @@ class Folder {
      * @throws Exceptions\NotSupportedCapabilityException
      */
     public function idle(callable $callback, int $timeout = 300, bool $auto_reconnect = false) {
-        $this->client->setTimeout($timeout);
         if (!in_array("IDLE", $this->client->getConnection()->getCapabilities())) {
             throw new NotSupportedCapabilityException("IMAP server does not support IDLE");
         }
         $this->client->openFolder($this->path, true);
         $connection = $this->client->getConnection();
+        echo "set timeout\n";
+        $connection->setConnectionTimeout($timeout);
+        echo "set timeout - done\n";
         $connection->idle();
 
         $sequence = ClientManager::get('options.sequence', IMAP::ST_MSGN);
@@ -382,6 +384,7 @@ class Folder {
         while (true) {
             try {
                 // This polymorphic call is fine - Protocol::idle() will throw an exception beforehand
+                echo "wait for next line\n";
                 $line = $connection->nextLine();
 
                 if (($pos = strpos($line, "EXISTS")) !== false) {
