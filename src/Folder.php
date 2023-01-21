@@ -409,7 +409,7 @@ class Folder {
             $line = $connection->nextLine_timed($timeout);                        
             if (strpos($line,"OK")!=false)  break;                       
         }
-        return r;
+        return $r;
 
     }
 
