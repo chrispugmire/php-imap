@@ -122,7 +122,6 @@ class ImapProtocol extends Protocol {
     }
 
     public function nextLine_timed($tout): string {
-        echo "nextline called - with timed\n";
         $line = "";
         $next_char = "";
         $c = $this->stream;        
@@ -135,6 +134,7 @@ class ImapProtocol extends Protocol {
             }
             $next_char = fread($this->stream, 1);
             if ($next_char==false) return "";
+            if ($next_char=="\n") break;
             $line .= $next_char;
         }
         if ($line === "\n" && $next_char === false) {
