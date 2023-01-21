@@ -105,21 +105,42 @@ class ImapProtocol extends Protocol {
      */
     public function nextLine(): string {
         $line = "";
-        echo "nextline called\n";
+        
         while (($next_char = fread($this->stream, 1)) !== false && $next_char !== "\n") {
             $info = stream_get_meta_data($this->stream);
             if ($info['timed_out']) {
-                echo "Timeout detected\n";
+        
                 return "";
             }
             $line .= $next_char;
         }
         if ($line === "" && $next_char === false) {
-            return "";
-            // throw new RuntimeException('empty response'); STUPID CODE. 
+            throw new RuntimeException('empty response'); 
         }
         if ($this->debug) echo "<< ".$line."\n";
         return $line . "\n";
+    }
+
+    public function nextLine_timed($tout): string {
+        echo "nextline called - with timed\n";
+        $line = "";
+        $c = $this->stream;        
+        $data = '';
+        $stR = array($this->smtp_conn);
+        $stW = null;
+        while (is_resource($c) && !feof($c)) {
+            if (!stream_select($stR, $stW, $stW, $timeout)) {
+                return "";
+            }
+            $next_char = fread($this->stream, 1);
+            if ($next_char==false) return "";
+            $line .= $next_char;
+        }
+        if ($line === "\n" && $next_char === false) {
+            return "";
+        }
+        if ($this->debug) echo "<< ".$line;
+        return $line;
     }
 
     /**
