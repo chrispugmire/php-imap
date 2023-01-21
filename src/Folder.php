@@ -376,7 +376,7 @@ class Folder {
         }
         $this->client->openFolder($this->path, true);
         $connection = $this->client->getConnection();        
-        $connection->idle();
+        $connection->write("IDLE"); // idle();
 
         $sequence = ClientManager::get('options.sequence', IMAP::ST_MSGN);
 
@@ -387,10 +387,15 @@ class Folder {
                 $line = $connection->nextLine_timed($timeout);
                 echo "Got line: ".$line;
                 if ($line=="") {
-                    $connection->done();
+                    $this->client->disconnect();
                     return false;
                 } else if (($pos = strpos($line, "EXISTS")) !== false) {
-                    $connection->done();
+                    $connection->write("DONE");
+                    while (true) { 
+                        $line = $connection->nextLine_timed($timeout);
+                        echo "Wait for end: ".$line;
+                        if (strpos($line,"OK")!=false)  break;                       
+                    }
                     return true;
                 } 
             }catch (Exceptions\RuntimeException $e) {
