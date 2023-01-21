@@ -376,7 +376,7 @@ class Folder {
         }
         $this->client->openFolder($this->path, true);
         $connection = $this->client->getConnection();        
-        $connection->write("IDLE"); // idle();
+        $connection->write("notag IDLE"); // idle();
 
         $sequence = ClientManager::get('options.sequence', IMAP::ST_MSGN);
 
