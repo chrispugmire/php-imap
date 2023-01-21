@@ -371,6 +371,7 @@ class Folder {
      */
 
      public function idleworks(int $timeout = 300) {
+        $r = false;
         if (!in_array("IDLE", $this->client->getConnection()->getCapabilities())) {
             throw new NotSupportedCapabilityException("IMAP server does not support IDLE");
         }
@@ -387,16 +388,10 @@ class Folder {
                 $line = $connection->nextLine_timed($timeout);
                 
                 if ($line=="") {
-                    $this->client->disconnect();
-                    return false;
+                   break;
                 } else if (($pos = strpos($line, "EXISTS")) !== false) {
-                    $connection->write("DONE");
-                    while (true) { 
-                        $line = $connection->nextLine_timed($timeout);
-                        
-                        if (strpos($line,"OK")!=false)  break;                       
-                    }
-                    return true;
+                    $r = true;
+                    break;
                 } 
             }catch (Exceptions\RuntimeException $e) {
                 
@@ -408,6 +403,14 @@ class Folder {
                 }
             }
         }
+
+        $connection->write("DONE");
+        while (true) { 
+            $line = $connection->nextLine_timed($timeout);                        
+            if (strpos($line,"OK")!=false)  break;                       
+        }
+        return r;
+
     }
 
 
