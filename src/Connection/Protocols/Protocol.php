@@ -229,6 +229,7 @@ abstract class Protocol implements ProtocolInterface {
     public function setConnectionTimeout($connection_timeout) {
         if ($connection_timeout !== null) {
             $this->connection_timeout = $connection_timeout;
+            stream_set_timeout($this->stream, $connection_timeout); // chrisp fix so it actually sets the timeout.
         }
         return $this;
     }
