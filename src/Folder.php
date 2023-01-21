@@ -368,15 +368,16 @@ class Folder {
      * @throws Exceptions\MessageNotFoundException
      * @throws Exceptions\NotSupportedCapabilityException
      */
-    public function idle(callable $callback, int $timeout = 300, bool $auto_reconnect = false) {
+
+     public function idleworks(int $timeout = 300) {
         if (!in_array("IDLE", $this->client->getConnection()->getCapabilities())) {
             throw new NotSupportedCapabilityException("IMAP server does not support IDLE");
         }
         $this->client->openFolder($this->path, true);
         $connection = $this->client->getConnection();
-        echo "set timeout\n";
+        
         $connection->setConnectionTimeout($timeout);
-        echo "set timeout - done\n";
+        
         $connection->idle();
 
         $sequence = ClientManager::get('options.sequence', IMAP::ST_MSGN);
@@ -385,6 +386,42 @@ class Folder {
             try {
                 // This polymorphic call is fine - Protocol::idle() will throw an exception beforehand
                 echo "wait for next line\n";
+                $line = $connection->nextLine();
+                echo "Got line: ".$line;
+                if ($line=="") {
+                    $connection->done();
+                    return false;
+                } else if (($pos = strpos($line, "EXISTS")) !== false) {
+                    $connection->done();
+                    return true;
+                } 
+            }catch (Exceptions\RuntimeException $e) {
+                if(strpos($e->getMessage(), "empty response") >= 0 && $connection->connected()) {
+                    return false;
+                }
+                if(strpos($e->getMessage(), "connection closed") === false) {
+                    return false;
+                }
+            }
+        }
+    }
+
+
+
+     public function idle(callable $callback, int $timeout = 300, bool $auto_reconnect = false) {
+        if (!in_array("IDLE", $this->client->getConnection()->getCapabilities())) {
+            throw new NotSupportedCapabilityException("IMAP server does not support IDLE");
+        }
+        $this->client->openFolder($this->path, true);
+        $connection = $this->client->getConnection();
+        $connection->setConnectionTimeout($timeout);
+        $connection->idle();
+
+        $sequence = ClientManager::get('options.sequence', IMAP::ST_MSGN);
+
+        while (true) {
+            try {
+                // This polymorphic call is fine - Protocol::idle() will throw an exception beforehand
                 $line = $connection->nextLine();
 
                 if (($pos = strpos($line, "EXISTS")) !== false) {
@@ -402,9 +439,6 @@ class Folder {
                 } elseif (strpos($line, "OK") === false) {
                     $connection->done();
                     $connection->idle();
-                } elseif ($line=="") {
-                    echo "Timeout in idle";
-                    return "";                    
                 }
             }catch (Exceptions\RuntimeException $e) {
                 if(strpos($e->getMessage(), "empty response") >= 0 && $connection->connected()) {
